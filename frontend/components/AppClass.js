@@ -9,6 +9,42 @@ export default class AppClass extends React.Component {
               "", "", "" ]
   }
 
+
+  // const address = ["(1, 1)", "(2, 1)", "(3, 1)",
+  // "(1, 2)", "(2, 2)", "(3, 2)",
+  // "(1, 3)", "(2, 3)", "(3, 3)"]
+
+  coordinatesHelper = () => {
+    const address = ["(1, 1)", "(2, 1)", "(3, 1)",
+    "(1, 2)", "(2, 2)", "(3, 2)",
+    "(1, 3)", "(2, 3)", "(3, 3)"]
+    const newArray = this.state.board;
+    const val = newArray.indexOf('B');
+    const cor = address.find((current, index) => {
+      if(index === val){
+        return current
+      }
+     
+    })
+    return cor
+      
+    
+    }
+
+    
+    // arr.push({x: x, y: y})
+    // for(let i = 0; i < this.state.board; i++){
+    //   if(i === 'B'){
+    //     return arr[i].x, arr[i].y;
+    //   }
+    //   return this.setState({
+    //     ...this.state,
+    //     coordinates: (x, y)
+    //   })
+    // }
+
+  
+
   resetGame = () => {
     return this.setState({
       ...this.state,
@@ -34,6 +70,7 @@ export default class AppClass extends React.Component {
     helperFunc(newArray, val, val-1)
     this.setState({
       ...this.state,
+      coordinates: this.coordinatesHelper(),
       totalMoves: this.state.totalMoves + 1,
       board: newArray
      
@@ -52,6 +89,7 @@ export default class AppClass extends React.Component {
     helperFunc(newArray, val, val+1)
     this.setState({
       ...this.state,
+      coordinates: this.coordinatesHelper(),
       totalMoves: this.state.totalMoves + 1,
       board: newArray
      
@@ -70,6 +108,7 @@ export default class AppClass extends React.Component {
     helperFunc(newArray, val, val-3)
     this.setState({
       ...this.state,
+      coordinates: this.coordinatesHelper(),
       totalMoves: this.state.totalMoves + 1,
       board: newArray
      
@@ -88,6 +127,7 @@ export default class AppClass extends React.Component {
     helperFunc(newArray, val, val+3)
     this.setState({
       ...this.state,
+      coordinates: this.coordinatesHelper(),
       totalMoves: this.state.totalMoves + 1,
       board: newArray
      
