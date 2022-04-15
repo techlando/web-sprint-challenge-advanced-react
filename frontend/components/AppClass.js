@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from "axios"
 
 export default class AppClass extends React.Component {
   state = {
@@ -6,14 +7,31 @@ export default class AppClass extends React.Component {
     totalMoves: 0,
     board: [  "", "", "",
               "", "B", "",
-              "", "", "" ]
+              "", "", "" ],
+    message: "",
+    email: ""
+    
   }
 
+  postNewEmail = () => {
+    axios.post("http://localhost:9000/api/result", { x: this.coordinatesHelper()[1], y: this.coordinatesHelper()[4], email: this.state.email, steps: this.state.totalMoves})
+    .then(res => {
+      this.setState({...this.state, message: res.data.message,  email: "" })
+    })
+    .catch(err => {
+      this.setState({...this.state, message: err.response.data.message })
+    })
+  }
 
-  // const address = ["(1, 1)", "(2, 1)", "(3, 1)",
-  // "(1, 2)", "(2, 2)", "(3, 2)",
-  // "(1, 3)", "(2, 3)", "(3, 3)"]
-
+  handleSubmit = (e) => {
+    e.preventDefault()
+    this.postNewEmail()
+    this.setState({
+      ...this.state,
+      email: ""
+    })
+  }
+ 
   coordinatesHelper = () => {
     const address = ["(1, 1)", "(2, 1)", "(3, 1)",
     "(1, 2)", "(2, 2)", "(3, 2)",
@@ -32,16 +50,7 @@ export default class AppClass extends React.Component {
     }
 
     
-    // arr.push({x: x, y: y})
-    // for(let i = 0; i < this.state.board; i++){
-    //   if(i === 'B'){
-    //     return arr[i].x, arr[i].y;
-    //   }
-    //   return this.setState({
-    //     ...this.state,
-    //     coordinates: (x, y)
-    //   })
-    // }
+  
 
   
 
@@ -52,30 +61,51 @@ export default class AppClass extends React.Component {
       totalMoves: 0,
       board: [  "", "", "",
       "", "B", "",
-      "", "", "" ]
+      "", "", "" ],
+      message: "",
+      email: ""
+      
     })
   }
-
+  handleEmail = (e) => {
+      const { value } = e.target
+      this.setState({ ...this.state,
+        email: value
+      })
+    };
   
-  handleChangeLeft = () => {
-    const helperFunc = (arr, from, to) => {
-      let ele = arr[from];
-      arr.splice(from, 1);
-      arr.splice(to, 0, ele);
-    }
-    const newArray = this.state.board;
-    const val = newArray.indexOf("B");
-    
-    
-    helperFunc(newArray, val, val-1)
-    this.setState({
-      ...this.state,
-      coordinates: this.coordinatesHelper(),
-      totalMoves: this.state.totalMoves + 1,
-      board: newArray
-     
-    })
+handleChangeLeft = () => {
+  const helperFunc = (arr, from, to) => {
+    let ele = arr[from];
+    arr.splice(from, 1);
+    arr.splice(to, 0, ele);
   }
+  const newArray = this.state.board;
+  const val = newArray.indexOf('B');
+  // console.log(this.coordinatesHelper()[1])
+  
+  
+  if(val === newArray[0] || newArray[0] || newArray[3] || newArray[6]){
+    return this.setState({
+      ...this.state,
+        coordinates: this.coordinatesHelper(),
+        totalMoves: this.state.totalMoves,
+        message: "You can't go left"
+    })
+  } else {
+      helperFunc(newArray, val, val-1)
+      this.setState({
+        ...this.state,
+        coordinates: this.coordinatesHelper(),
+        totalMoves: this.state.totalMoves + 1,
+        message: "",
+        board: newArray
+       })
+
+  }
+}
+  
+  
   handleChangeRight = () => {
     const helperFunc = (arr, from, to) => {
       let ele = arr[from];
@@ -84,17 +114,30 @@ export default class AppClass extends React.Component {
     }
     const newArray = this.state.board;
     const val = newArray.indexOf("B");
-    
-    
-    helperFunc(newArray, val, val+1)
-    this.setState({
-      ...this.state,
-      coordinates: this.coordinatesHelper(),
-      totalMoves: this.state.totalMoves + 1,
-      board: newArray
+
+    if(val === newArray[1] || newArray[5] || newArray[8] || newArray[2]){
      
-    })
+      return this.setState({
+        ...this.state,
+          coordinates: this.coordinatesHelper(),
+          totalMoves: this.state.totalMoves,
+          message: "You can't go right"
+      })
+    } else {
+        helperFunc(newArray, val, val+1)
+        this.setState({
+          ...this.state,
+          coordinates: this.coordinatesHelper(),
+          totalMoves: this.state.totalMoves + 1,
+          message: "",
+          board: newArray
+         })
+  
+    }
   }
+    
+    
+ 
   handleChangeUp = () => {
     const helperFunc = (arr, from, to) => {
       let ele = arr[from];
@@ -103,17 +146,29 @@ export default class AppClass extends React.Component {
     }
     const newArray = this.state.board;
     const val = newArray.indexOf("B");
-    
-    
-    helperFunc(newArray, val, val-3)
-    this.setState({
-      ...this.state,
-      coordinates: this.coordinatesHelper(),
-      totalMoves: this.state.totalMoves + 1,
-      board: newArray
-     
-    })
+
+    if(val === newArray[0] || newArray[0] || newArray[1] || newArray[2]){
+      return this.setState({
+        ...this.state,
+          coordinates: this.coordinatesHelper(),
+          totalMoves: this.state.totalMoves,
+          message: "You can't go up"
+      })
+    } else {
+        helperFunc(newArray, val, val-3)
+        this.setState({
+          ...this.state,
+          coordinates: this.coordinatesHelper(),
+          totalMoves: this.state.totalMoves + 1,
+          message: "",
+          board: newArray
+         })
+  
+    }
   }
+    
+    
+  
   handleChangeDown = () => {
     const helperFunc = (arr, from, to) => {
       let ele = arr[from];
@@ -122,17 +177,27 @@ export default class AppClass extends React.Component {
     }
     const newArray = this.state.board;
     const val = newArray.indexOf("B");
-    
-    
-    helperFunc(newArray, val, val+3)
-    this.setState({
-      ...this.state,
-      coordinates: this.coordinatesHelper(),
-      totalMoves: this.state.totalMoves + 1,
-      board: newArray
-     
-    })
+
+    if(val === newArray[6] || newArray[6] || newArray[7] || newArray[8]){
+      return this.setState({
+        ...this.state,
+          coordinates: this.coordinatesHelper(),
+          totalMoves: this.state.totalMoves,
+          message: "You can't go down"
+      })
+    } else {
+        helperFunc(newArray, val, val+3)
+        this.setState({
+          ...this.state,
+          coordinates: this.coordinatesHelper(),
+          totalMoves: this.state.totalMoves + 1,
+          message: "",
+          board: newArray
+         })
+  
+    }
   }
+    
 
 
   addMoves = () => {
@@ -143,19 +208,7 @@ export default class AppClass extends React.Component {
       })
      }
 
-  // handleChange = (val, idx) => {
-  //   const updatedArray = [...this.state.board]
-    
-  //   updatedArray.map((val, idx)=>{
-  //     if(val === idx[1] || idx[2] || idx[4] || idx[5] || idx[7] || idx[8] ) {
-  //       return this.setState({
-  //         ...this.state, 
-  //         coordinates: idx -1,
-  //         totalMoves: this.state.totalMoves + 1,
-  //         board: updatedArray
-        
-  //       })})}
-        
+  
         
      
   render() {
@@ -164,7 +217,7 @@ export default class AppClass extends React.Component {
       <div id="wrapper" className={className}>
         <div className="info">
           <h3 id="coordinates">Coordinates {this.state.coordinates}</h3>
-          <h3 id="steps">You moved {this.state.totalMoves} times</h3>
+          <h3 id="steps">You moved {this.state.totalMoves === 1 ? `${this.state.totalMoves} time` : `${this.state.totalMoves} times` }</h3>
         </div>
         <div id="grid">
           {this.state.board.map((val, idx) => {
@@ -173,18 +226,10 @@ export default class AppClass extends React.Component {
             else {return (<div key={idx} className="square"></div>)}
             
           })}
-          {/* <div className="square"></div>
-          <div className="square"></div>
-          <div className="square"></div>
-          <div className="square"></div>
-          <div className="square active">B</div>
-          <div className="square"></div>
-          <div className="square"></div>
-          <div className="square"></div>
-          <div className="square"></div> */}
+         
         </div>
         <div className="info">
-          <h3 id="message"></h3>
+          <h3 id="message">{this.state.message}</h3>
         </div>
         <div id="keypad">
           <button  onClick={this.handleChangeLeft} id="left">LEFT</button>
@@ -193,9 +238,9 @@ export default class AppClass extends React.Component {
           <button onClick={this.handleChangeDown} id="down">DOWN</button>
           <button onClick={this.resetGame} id="reset">reset</button>
         </div>
-        <form>
-          <input id="email" type="email" placeholder="type email"></input>
-          <input id="submit" type="submit"></input>
+        <form onSubmit={this.handleSubmit} >
+          <input value={this.state.email} onChange={this.handleEmail} id="email" type="email" placeholder="type email"></input>
+          <input  id="submit" type="submit"></input>
         </form>
       </div>
     )
