@@ -10,7 +10,7 @@ export default function AppFunctional(props) {
               "", "B", "",
               "", "", "" ],
     message: "",
-    email: "landonator@gmail.com"
+    email: ""
 
   });
 
